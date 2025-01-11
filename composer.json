@@ -2,6 +2,7 @@
     "name": "contrainteractive/wp-laravel-login",
     "description": "Allows a user to login to a Laravel application using an existing WordPress hashed password.",
     "type": "library",
+    "license": "MIT",
     "require": {
         "php": "^8.0",
         "illuminate/support": "^10.0|^11.0",
