@@ -3,8 +3,9 @@
 namespace ContraInteractive\WpLaravelLogin\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use ContraInteractive\WpLaravelLogin\Auth\WpUserProvider;
+
 use ContraInteractive\WpLaravelLogin\Console\Commands\CopyWpUsersCommand;
+use ContraInteractive\WpLaravelLogin\Auth\UserProviders\WpUserProvider;
 
 class WpLoginServiceProvider extends ServiceProvider
 {

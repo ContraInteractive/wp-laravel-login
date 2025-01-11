@@ -6,7 +6,7 @@ use ContraInteractive\WpLaravelLogin\Auth\Hashers\WP\PasswordHash;
 
 class WpPasswordHasher
 {
-    public static function check($password, $hash)
+    public static function check($password, $hash): bool
     {
         $iterationCount = config('wp-login.iteration_count', 8);
         $portableHashes = config('wp-login.portable_hashes', true);
