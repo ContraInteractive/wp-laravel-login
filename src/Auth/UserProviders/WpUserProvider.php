@@ -28,7 +28,7 @@ class WpUserProvider extends EloquentUserProvider
         // 1) Check if the stored password is a WordPress hash
         $wp = WpPasswordHasher::check($plain, $existingHash);
 
-        if ($wp->CheckPassword($plain, $existingHash)) {
+        if ($wp) {
             // If it matches, re-hash with Laravel's default
             $this->rehashPasswordIfRequired($user, $credentials);
 
