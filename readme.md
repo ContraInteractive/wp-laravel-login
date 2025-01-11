@@ -62,7 +62,82 @@ $users = DB::connection('wp')
     ->table('wp_users')
     ->select('ID', 'user_login', 'user_pass', 'user_email', 'user_registered')
     ->get();
+    
+    
+// Copy WordPress users to Laravel
+// Be careful that this doesnt auto update (the WP existing HASH) with a Laravel password hash 
+// which doing a $user->save() in Laravel will do automatically.
+// so compare your Databases after the fact
+    
+foreach ($wpUsers as $wpUser) {
+    try {
+        DB::table('users')->updateOrInsert(
+            ['email' => $wpUser->user_email],
+            [
+                'name'       => $wpUser->user_login,
+                'email'      => $wpUser->user_email,
+                'password'   => $wpUser->user_pass, // Retain WordPress hash
+                'created_at' => $wpUser->user_registered,
+                'updated_at' => now(),
+            ]
+        );
+
+        $this->info("Copied user: {$wpUser->user_login}");
+    } catch (\Exception $e) {
+        $this->error("Failed to copy user {$wpUser->user_login}: " . $e->getMessage());
+    }
+}
 ```
+
+Or to just make a test user with a WP password you could do this
+
+```bash
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use ContraInteractive\WpLaravelLogin\Auth\Hashers\WP\PasswordHash;
+
+class CreateWPUserCommand extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:create-wp-user';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        // make a user with the WordPress password hash
+        $password = 'password';
+        $wp = app(PasswordHash::class, ['iteration_count_log2' => 8, 'portable_hashes' => true]);
+        $hash = $wp->HashPassword($password);
+
+        $user = new \App\Models\User();
+
+        $user->setRawAttributes([
+            'password' => $hash, // <-- take the hash as is
+            'name' => 'John Doe',
+            'email' => 'example'.rand(1, 1000).time() .'@example.com',
+        ]);
+
+        $user->save();
+    }
+}
+```
+
 And build your own migration script.
 
 
