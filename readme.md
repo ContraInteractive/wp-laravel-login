@@ -31,7 +31,18 @@ Ensure the auth.php configuration uses the custom provider:
     'model' => env('AUTH_MODEL', App\Models\User::class),
 ],
 ```
-3. !! Note the Users password will be hashed by laravel after login. It updates the password in the database.
+3. Note the Users password will be hashed by laravel after login (default behavior). It updates the password in the database with a Laravel Hash.
+ - you can disable this by setting the `preserve_wp_hash` config to false in config/wp-login.php (see:  `Publishing the Configuration`).
+
+```php
+
+// config/wp-login.php
+
+return [
+    // Enable or disable the preservation of the WordPress hash after user login.
+    'preserve_wp_hash' => false,
+];
+```
 
 ### Copy WordPress Users to Laravel
 Included is a basic artisan command to copy WordPress users to Laravel. This is useful for migrating users from WordPress to Laravel.
@@ -168,5 +179,6 @@ return [
     'iteration_count' => 8,
     'portable_hashes' => true,
     'wp_connection' => 'wp',
+    'preserve_wp_hash' => false,
 ];
 ```
