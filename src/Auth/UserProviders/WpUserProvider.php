@@ -19,23 +19,21 @@ class WpUserProvider extends EloquentUserProvider
      */
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        // The plain-text password from the login form
         $plain = $credentials['password'];
-
-        // The stored (hashed) password in DB
         $existingHash = $user->getAuthPassword();
 
-        // 1) Check if the stored password is a WordPress hash
-        $wp = WpPasswordHasher::check($plain, $existingHash);
+        // If password matches the WP hash
+        if (WpPasswordHasher::check($plain, $existingHash)) {
 
-        if ($wp) {
-            // If it matches, re-hash with Laravel's default
-            $this->rehashPasswordIfRequired($user, $credentials);
+            // Rehash with Laravel’s hasher only if config says we *should* rehash
+            if (! config('wp-login.preserve_wp_hash')) {
+                $this->rehashPasswordIfRequired($user, $credentials);
+            }
 
             return true;
         }
 
-        // 2) Otherwise, attempt normal Laravel hashing check
+        // Otherwise do the normal Laravel check
         return parent::validateCredentials($user, $credentials);
     }
 }

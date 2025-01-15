@@ -16,5 +16,9 @@ return [
     // Enable portable hashing (compatible across systems).
     'portable_hashes' => true,
 
-    'wp_connection' => 'wp', // defines the connection name for your WP connection that you defined in config/database.php
+    // Enable or disable the preservation of the WordPress hash after user login.
+    'preserve_wp_hash' => false,
+
+    // defines the connection name for your WP connection that you defined in config/database.php
+    'wp_connection' => 'wp',
 ];
