@@ -32,7 +32,7 @@ Ensure the auth.php configuration uses the custom provider:
 ],
 ```
 3. Note the Users password will be hashed by laravel after login (default behavior). It updates the password in the database with a Laravel Hash.
- - you can disable this by setting the `preserve_wp_hash` config to false in config/wp-login.php (see:  `Publishing the Configuration`).
+ - you can disable this by setting the `preserve_wp_hash` config to `true` in config/wp-login.php (see:  `Publishing the Configuration`).
 
 ```php
 
