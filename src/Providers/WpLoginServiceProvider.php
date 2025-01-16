@@ -6,6 +6,9 @@ use Illuminate\Support\ServiceProvider;
 
 use ContraInteractive\WpLaravelLogin\Console\Commands\CopyWpUsersCommand;
 use ContraInteractive\WpLaravelLogin\Auth\UserProviders\WpUserProvider;
+use ContraInteractive\WpLaravelLogin\Console\Commands\CreateWPUserCommand;
+use ContraInteractive\WpLaravelLogin\Repositories\NonceRepositoryInterface;
+use ContraInteractive\WpLaravelLogin\Repositories\CacheNonceRepository;
 
 class WpLoginServiceProvider extends ServiceProvider
 {
@@ -16,6 +19,9 @@ class WpLoginServiceProvider extends ServiceProvider
     {
         // Merge the default configuration
         $this->mergeConfigFrom(__DIR__ . '/../../config/wp-login.php', 'wp-login');
+
+        // Bind the NonceRepositoryInterface to the CacheNonceRepository
+        $this->app->bind(NonceRepositoryInterface::class, CacheNonceRepository::class);
     }
 
     /**
@@ -37,7 +43,9 @@ class WpLoginServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CopyWpUsersCommand::class,
+                CreateWPUserCommand::class,
             ]);
         }
+        $this->loadRoutesFrom(__DIR__.'/../../src/Routes/wp-laravel-login.php');
     }
 }

@@ -1,10 +1,12 @@
 <?php
 
-namespace ContraInteractive\WpLaravelLogin\Auth;
+namespace ContraInteractive\WpLaravelLogin\Services;
 
 use ContraInteractive\WpLaravelLogin\Auth\Hashers\WP\PasswordHash;
+use function ContraInteractive\WpLaravelLogin\Auth\app;
+use function ContraInteractive\WpLaravelLogin\Auth\config;
 
-class WpPasswordHasher
+class WpPasswordHashService
 {
     public static function check($password, $hash): bool
     {

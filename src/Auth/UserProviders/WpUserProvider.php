@@ -5,7 +5,7 @@ namespace ContraInteractive\WpLaravelLogin\Auth\UserProviders;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Auth\EloquentUserProvider;
 use function ContraInteractive\WpLaravelLogin\Auth\app;
-use ContraInteractive\WpLaravelLogin\Auth\WpPasswordHasher;
+use ContraInteractive\WpLaravelLogin\Services\WpPasswordHashService;
 
 class WpUserProvider extends EloquentUserProvider
 {
@@ -23,7 +23,7 @@ class WpUserProvider extends EloquentUserProvider
         $existingHash = $user->getAuthPassword();
 
         // If password matches the WP hash
-        if (WpPasswordHasher::check($plain, $existingHash)) {
+        if (WpPasswordHashService::check($plain, $existingHash)) {
 
             // Rehash with Laravel’s hasher only if config says we *should* rehash
             if (! config('wp-login.preserve_wp_hash')) {

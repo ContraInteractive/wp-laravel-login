@@ -3,8 +3,8 @@
 namespace ContraInteractive\WpLaravelLogin\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+
 use ContraInteractive\WpLaravelLogin\Services\WpDatabaseManager;
 
 class CopyWpUsersCommand extends Command
