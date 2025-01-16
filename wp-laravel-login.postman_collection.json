@@ -1,0 +1,78 @@
+{
+	"info": {
+		"_postman_id": "d3ceaed5-7839-4b75-ba69-e7266dc8e94a",
+		"name": "wp-laravel-login",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25647080"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"timestamp\", Math.floor(Date.now() / 1000));",
+							"",
+							"const payload = {",
+							"    email: \"person@example.com\",",
+							"    wp_hash: \"somehashvalue\",",
+							"    nonce: \"somenonce\",",
+							"    timestamp: Math.floor(Date.now() / 1000) // Current timestamp",
+							"};",
+							"",
+							"// Define the secret",
+							"const secret = \"+vz40v429IC/YZII2ANuXPJSgBbU4a/x\";",
+							"",
+							"// Stringify the payload",
+							"const payloadString = JSON.stringify(payload);",
+							"",
+							"// Generate the HMAC signature",
+							"const crypto = require('crypto-js'); // Postman supports CryptoJS library",
+							"const signature = crypto.HmacSHA256(payloadString, secret).toString(crypto.enc.Hex);",
+							"",
+							"// Set the payload and signature as variables",
+							"pm.variables.set(\"payload\", JSON.stringify(payload));",
+							"pm.variables.set(\"signature\", signature);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Signature",
+						"value": "{{signature}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{payload}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://wp-laravel-login-demo.test/api/wp-sync-password",
+					"protocol": "https",
+					"host": [
+						"wp-laravel-login-demo",
+						"test"
+					],
+					"path": [
+						"api",
+						"wp-sync-password"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
