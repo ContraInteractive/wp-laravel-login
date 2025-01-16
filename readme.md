@@ -35,22 +35,21 @@ composer require contrainteractive/wp-laravel-login
 **WordPress User Authentication**
 
 The package provides a custom `WpUserProvider` that validates credentials by:
-1. Checking if the stored password is a WordPress hash.
-2. Rehashing the password to Laravel’s hashing mechanism upon successful login.
+1.	Validates passwords against the WordPress hashing format.
+2.	Updates passwords to Laravel’s hashing mechanism upon successful login (unless disabled).
 
-Ensure the `auth.php` configuration uses the custom provider:
 
+Update auth.php to use the custom provider:
 ```php  
 'providers' => [  
-  'users' => [  
-	  'driver' => 'wp',  //<-- laravel auth still works as normal here
-	  'model' => env('AUTH_MODEL', App\Models\User::class),  
+   'users' => [  
+      'driver' => 'wp',  //<-- laravel auth still works as normal here
+      'model' => env('AUTH_MODEL', App\Models\User::class),  
  ],
 ```  
-- Note that the Users password will be hashed by laravel after login (default behavior). It updates the password in the database with a Laravel Hash.
-- This doesn't change how a user will login, we just update to a more secure hashing format
-- You can disable this by setting the `preserve_wp_hash` config to `true` in config/wp-login.php (see:  `Publishing the Configuration`).
+**Password Rehashing Behavior**
 
+By default, the package updates the password hash to Laravel’s format after login. To disable this, update the config/wp-login.php file:
 
 ```php    
 // config/wp-login.php  
@@ -73,18 +72,18 @@ You can also define a db connection in the `config/database.php` file instead of
 ```php 
   'wp' => 
 	  [ 
-		  'driver'    => 'mysql', 
-		  'host'      => env('WP_DB_HOST', '127.0.0.1'), 
-		  'database'  => env('WP_DB_DATABASE', 'wordpress'), 
-		  'username'  => env('WP_DB_USERNAME', 'root'), 
-		  'password'  => env('WP_DB_PASSWORD', ''), 
-		  'charset'   => 'utf8mb4', 
-		  'collation' => 'utf8mb4_unicode_ci', 
-		  'prefix'    => env('WP_DB_PREFIX', 'wp_'),
+            'driver'    => 'mysql', 
+            'host'      => env('WP_DB_HOST', '127.0.0.1'), 
+            'database'  => env('WP_DB_DATABASE', 'wordpress'), 
+            'username'  => env('WP_DB_USERNAME', 'root'), 
+            'password'  => env('WP_DB_PASSWORD', ''), 
+            'charset'   => 'utf8mb4', 
+            'collation' => 'utf8mb4_unicode_ci', 
+            'prefix'    => env('WP_DB_PREFIX', 'wp_'),
 	  ],
 ```  
 
-Which means you can do (if writing your own import, or just want to list out WP users:
+Fetch and copy WordPress users programmatically:
 
 
 ```php  
