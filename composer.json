@@ -23,5 +23,13 @@
             "name": "Tim Shultis",
             "email": "alloyking@gmail.com"
         }
-    ]
+    ],
+    "require-dev": {
+        "pestphp/pest-plugin-laravel": "^3.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
 }

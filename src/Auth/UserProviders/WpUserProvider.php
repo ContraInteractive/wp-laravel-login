@@ -22,18 +22,34 @@ class WpUserProvider extends EloquentUserProvider
         $plain = $credentials['password'];
         $existingHash = $user->getAuthPassword();
 
-        // If password matches the WP hash
-        if (WpPasswordHashService::check($plain, $existingHash)) {
+        // Handle new WordPress 6.8+ prefixed bcrypt hashes
+        if (str_starts_with($existingHash, '$wp')) {
+            // Pre-hash the password the same way WP 6.8 does
+            $passwordToVerify = base64_encode(hash_hmac('sha384', $plain, 'wp-sha384', true));
+            // Verify against the hash with the prefix removed
+            if (password_verify($passwordToVerify, substr($existingHash, 3))) {
+                $this->rehashPasswordIfRequired($user, $credentials);
+                return true;
+            }
+        }
 
-            // Rehash with Laravel’s hasher only if config says we *should* rehash
-            if (! config('wp-login.preserve_wp_hash')) {
+        // Check for standard PHP password hashes (e.g., vanilla bcrypt)
+        // The password_verify function in PHP is algorithm-agnostic. It automatically detects the algorithm (bcrypt, Argon2id, etc.) from the hash string itself and uses the correct method to verify the password.
+        if (password_verify($plain, $existingHash)) {
+            if (password_needs_rehash($existingHash, PASSWORD_DEFAULT)) {
                 $this->rehashPasswordIfRequired($user, $credentials);
             }
-
             return true;
         }
 
-        // Otherwise do the normal Laravel check
-        return parent::validateCredentials($user, $credentials);
+        // Fallback for older WordPress phpass hashes
+        if (WpPasswordHashService::check($plain, $existingHash)) {
+            if (! config('wp-login.preserve_wp_hash')) {
+                $this->rehashPasswordIfRequired($user, $credentials);
+            }
+            return true;
+        }
+
+        return false;
     }
 }
